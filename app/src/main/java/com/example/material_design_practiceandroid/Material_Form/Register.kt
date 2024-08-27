@@ -156,7 +156,7 @@ fun RegisterForm() {
                 }
                 Spacer(modifier = Modifier.padding(start = 5.dp))
                 Button(
-                    onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(
+                    onClick = { isDialogOpen=true }, colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
@@ -164,6 +164,9 @@ fun RegisterForm() {
                 }
             }
 
+        }
+        if (isDialogOpen) {
+            FullScreenDialog(onDismiss = { isDialogOpen = false })
         }
 
     }

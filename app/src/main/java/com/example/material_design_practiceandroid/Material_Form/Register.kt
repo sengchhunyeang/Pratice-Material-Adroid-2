@@ -1,6 +1,7 @@
 package com.example.material_design_practiceandroid.Material_Form
 
 import android.content.pm.PackageManager.Property
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,10 +37,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.motionEventSpy
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -63,8 +72,7 @@ fun RegisterForm() {
     val bottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.padding(20.dp)) {
-        val imageModifier = Modifier
-            .size(50.dp)
+        val imageModifier = Modifier.size(50.dp)
         Row(modifier = Modifier.fillMaxWidth()) {
 
         }
@@ -89,7 +97,10 @@ fun RegisterForm() {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentWidth(Alignment.CenterHorizontally)
+                    .wrapContentWidth(Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold,
+                color = Color.Blue
+
             )
         }
 
@@ -97,18 +108,8 @@ fun RegisterForm() {
 
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { newName -> lastName = newName },
-                label = { Text("Input Your Name") },
-                placeholder = { Text(text = "Last Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
             OutlinedTextField(
                 value = firstName,
                 onValueChange = { newName -> firstName = newName },
@@ -118,6 +119,16 @@ fun RegisterForm() {
                     .fillMaxWidth()
                     .weight(1f)
             )
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { newName -> lastName = newName },
+                label = { Text("Input Your Name") },
+                placeholder = { Text(text = "Last Name") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
+
 
         }
         //Gender
@@ -125,8 +136,7 @@ fun RegisterForm() {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Gender")
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(selected = gender == "Male", onClick = { gender = "Male" })
                 Spacer(modifier = Modifier.width(8.dp))
@@ -138,8 +148,7 @@ fun RegisterForm() {
         }
         // DropDown
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             SchoolDropdown(
                 selectedSchool = selected,
@@ -153,7 +162,7 @@ fun RegisterForm() {
                         lastName = ""
                         firstName = ""
                         gender = "Male"
-                        selected = "HRD"
+                        selected = ""
                     }, colors = ButtonDefaults.buttonColors(
                         containerColor = Color.LightGray
                     )
@@ -202,8 +211,7 @@ fun ChangeLanguage() {
     }
     if (isSheetOpen) {
         ModalBottomSheet(
-            onDismissRequest = { isSheetOpen = false },
-            modifier = Modifier
+            onDismissRequest = { isSheetOpen = false }, modifier = Modifier
         ) {
             CountryList(onCountrySelected = { country ->
                 selectedCountry = country
@@ -222,12 +230,10 @@ fun CountryList(onCountrySelected: (Pair<String, String>) -> Unit) {
     )
     LazyColumn {
         items(countries) { country: Pair<String, String> ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onCountrySelected(country) }
-                    .padding(vertical = 10.dp, horizontal = 20.dp)
-            ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCountrySelected(country) }
+                .padding(vertical = 10.dp, horizontal = 20.dp)) {
                 Text(text = country.second, modifier = Modifier.padding(end = 20.dp))
                 Text(text = country.first)
             }
@@ -238,15 +244,10 @@ fun CountryList(onCountrySelected: (Pair<String, String>) -> Unit) {
 //========================
 @Composable
 fun FullScreenDialog(
-    onDismiss: () -> Unit,
-    lastName: String,
-    firstName: String,
-    gender: String,
-    school: String
+    onDismiss: () -> Unit, lastName: String, firstName: String, gender: String, school: String
 ) {
     Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
             modifier = Modifier
@@ -256,31 +257,81 @@ fun FullScreenDialog(
                 .fillMaxSize(),
         ) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
+                modifier = Modifier.padding(16.dp)
             ) {
-                Row()   {
+                Column() {
+
+                    TextButton(
+                        onClick = onDismiss, modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "content description",
+                            tint = Color.Red
+                        )
+                    }
                     Text(
                         text = "Information",
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier
-                            .fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
-
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.CenterHorizontally),
+                        fontWeight = FontWeight.Bold
                     )
                 }
+
+
+
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Last Name: $lastName", fontSize = 20.sp )
-                Text(text = "First Name: $firstName", fontSize = 20.sp)
-                Text(text = "School: $school", fontSize = 20.sp)
-                Text(text = "Gender: $gender", fontSize = 20.sp)
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                Card(
+                    modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
                 ) {
-                    Text(text = "Close", color = Color.White)
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = Color.Red, fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append("First Name:\t")
+                                }
+                                withStyle(style = SpanStyle(color = Color.Black)) {
+                                    append("\t$lastName")
+                                }
+                            },
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = "Last Name:\t $firstName",
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            maxLines = 5,
+                            fontWeight = FontWeight.Bold,
+                            style = LocalTextStyle.current.copy(lineHeight = 50.sp)
+                        )
+                        Text(
+                            text = "School: \t$school",
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            maxLines = 5,
+                            fontWeight = FontWeight.Bold,
+                            style = LocalTextStyle.current.copy(lineHeight = 50.sp)
+                        )
+                        Text(
+                            text = "Gender:\t $gender",
+                            fontSize = 20.sp,
+                            modifier = Modifier,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                 }
+
             }
         }
     }

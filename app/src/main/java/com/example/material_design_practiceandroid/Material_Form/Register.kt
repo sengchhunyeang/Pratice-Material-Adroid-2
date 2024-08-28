@@ -1,5 +1,6 @@
 package com.example.material_design_practiceandroid.Material_Form
 
+import android.content.pm.PackageManager.Property
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,6 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.GrammaticalInflectionManagerCompat.GrammaticalGender
 import kotlinx.coroutines.launch
 
 
@@ -138,7 +141,9 @@ fun RegisterForm() {
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            SchoolDropdown()
+            SchoolDropdown(
+                selectedSchool = selected,
+                onSchoolSelected = { school -> selected = school })
         }
         Spacer(modifier = Modifier.height(16.dp))
         Column() {
@@ -148,6 +153,7 @@ fun RegisterForm() {
                         lastName = ""
                         firstName = ""
                         gender = "Male"
+                        selected = "HRD"
                     }, colors = ButtonDefaults.buttonColors(
                         containerColor = Color.LightGray
                     )
@@ -156,21 +162,24 @@ fun RegisterForm() {
                 }
                 Spacer(modifier = Modifier.padding(start = 5.dp))
                 Button(
-                    onClick = { isDialogOpen=true }, colors = ButtonDefaults.buttonColors(
+                    onClick = { isDialogOpen = true }, colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Text(text = "Save")
                 }
             }
-
         }
         if (isDialogOpen) {
-            FullScreenDialog(onDismiss = { isDialogOpen = false })
+            FullScreenDialog(
+                onDismiss = { isDialogOpen = false },
+                lastName = lastName,
+                firstName = firstName,
+                gender = gender,
+                school = selected
+            )
         }
-
     }
-
 }
 
 // Button change language
@@ -185,11 +194,11 @@ fun ChangeLanguage() {
     }
     Button(
         onClick = { isSheetOpen = true }, modifier = Modifier, colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-            contentColor = Color.Black
-        )
+            containerColor = Color.White,
+
+            )
     ) {
-        Text(text = "${selectedCountry.second} ${selectedCountry.first}")
+        Text(text = "${selectedCountry.second} ")
     }
     if (isSheetOpen) {
         ModalBottomSheet(
@@ -225,22 +234,45 @@ fun CountryList(onCountrySelected: (Pair<String, String>) -> Unit) {
         }
     }
 }
+
 //========================
 @Composable
-fun FullScreenDialog(onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
+fun FullScreenDialog(
+    onDismiss: () -> Unit,
+    lastName: String,
+    firstName: String,
+    gender: String,
+    school: String
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+
                 .background(Color.White)
-                .padding(20.dp)
+                .fillMaxWidth()
+                .fillMaxSize(),
         ) {
-            Column {
-                Text(
-                    text = "Your data has been saved!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                Row()   {
+                    Text(
+                        text = "Information",
+                        style = MaterialTheme.typography.headlineMedium,
+                        modifier = Modifier
+                            .fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
+
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Last Name: $lastName", fontSize = 20.sp )
+                Text(text = "First Name: $firstName", fontSize = 20.sp)
+                Text(text = "School: $school", fontSize = 20.sp)
+                Text(text = "Gender: $gender", fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = onDismiss,

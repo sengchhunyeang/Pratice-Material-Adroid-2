@@ -27,12 +27,11 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SchoolDropdown(
+    selectedSchool: String,
+    onSchoolSelected: (String) -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
-    }
-    var selectedSchool by remember {
-        mutableStateOf("HRD")
     }
     val school = listOf("HRD", "PPI", "RUPP")
 
@@ -59,7 +58,7 @@ fun SchoolDropdown(
                 DropdownMenuItem(
                     text = { Text(text = school) },
                     onClick = {
-                        selectedSchool = school
+                        onSchoolSelected(school)
                         expanded = false
                     })
             }
